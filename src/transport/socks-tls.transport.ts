@@ -45,7 +45,14 @@ export class SocksTlsTransport extends Transport<SocksTlsTransportOptions> {
 
             this.duplex = tlsSocket;
 
+            const to = setTimeout(() => {
+                tlsSocket.destroy();
+                reject(new Error('OB TLS handshake timeout'));
+            }, 10000);
+
+            to.unref();
             tlsSocket.once('secureConnect', () => {
+                clearTimeout(to);
                 resolve();
             });
 
@@ -55,11 +62,6 @@ export class SocksTlsTransport extends Transport<SocksTlsTransportOptions> {
 
             tlsSocket.once('end', () => {
                 reject(new Error('TLS socket closed before handshake'));
-            });
-
-            tlsSocket.setTimeout(10000, () => {
-                tlsSocket.destroy();
-                reject(new Error('OB TLS handshake timeout'));
             });
         });
     }
