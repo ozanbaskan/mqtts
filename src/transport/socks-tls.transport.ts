@@ -34,18 +34,33 @@ export class SocksTlsTransport extends Transport<SocksTlsTransportOptions> {
             },
             command: 'connect',
         });
-        return new Promise(res => {
-            this.duplex = connect(
-                {
-                    ...this.options.additionalOptions,
-                    socket: info.socket,
-                    host: this.options.host,
-                    port: this.options.port,
-                },
-                () => {
-                    res();
-                },
-            );
+
+        return new Promise((resolve, reject) => {
+            const tlsSocket = connect({
+                ...this.options.additionalOptions,
+                socket: info.socket,
+                host: this.options.host,
+                port: this.options.port,
+            });
+
+            this.duplex = tlsSocket;
+
+            tlsSocket.once('secureConnect', () => {
+                resolve();
+            });
+
+            tlsSocket.once('error', (err: Error) => {
+                reject(err);
+            });
+
+            tlsSocket.once('end', () => {
+                reject(new Error('TLS socket closed before handshake'));
+            });
+
+            tlsSocket.setTimeout(10000, () => {
+                tlsSocket.destroy();
+                reject(new Error('OB TLS handshake timeout'));
+            });
         });
     }
 }

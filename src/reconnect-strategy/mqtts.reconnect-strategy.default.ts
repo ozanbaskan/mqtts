@@ -12,7 +12,7 @@ export class MqttsReconnectStrategyDefault implements MqttsReconnectStrategy {
         /**
          * Maximum attempts amount
          */
-        private maximum: number = 60,
+        private maximum: number = 10,
         /**
          * Interval between attempts, milliseconds
          */
