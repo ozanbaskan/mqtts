@@ -1,6 +1,6 @@
 {
-    "name": "mqtts",
-    "version": "1.5.0",
+    "name": "obmqtt",
+    "version": "0.0.3",
     "description": "MQTT client in Typescript",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -12,10 +12,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/ozanbaskan7/mqtts"
+        "url": "https://github.com/ozanbaskan/mqtts"
     },
     "bugs": {
-        "url": "https://github.com/ozanbaskan7/mqtts/issues"
+        "url": "https://github.com/ozanbaskan/mqtts/issues"
     },
     "scripts": {
         "test": "jest",
