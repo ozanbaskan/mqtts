@@ -16,7 +16,7 @@ export class MqttsReconnectStrategyDefault implements MqttsReconnectStrategy {
         /**
          * Interval between attempts, milliseconds
          */
-        private interval: number = 1000,
+        private interval: number = 3000,
     ) {}
     check(reason?: any) {
         if (reason instanceof ConnectError) {
