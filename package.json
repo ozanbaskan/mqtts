@@ -12,10 +12,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Nerixyz/mqtts"
+        "url": "https://github.com/ozanbaskan7/mqtts"
     },
     "bugs": {
-        "url": "https://github.com/Nerixyz/mqtts/issues"
+        "url": "https://github.com/ozanbaskan7/mqtts/issues"
     },
     "scripts": {
         "test": "jest",
