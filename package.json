@@ -66,6 +66,9 @@
         "iot",
         "tls"
     ],
-    "author": "nerixyz",
+    "author": {
+        "name": "Ozan Baskan",
+        "email": "ozanbaskan7@gmail.com"
+    },
     "license": "MIT"
 }
