@@ -282,7 +282,15 @@ export class MqttClient<
                 flowFunc: flow,
             };
             const first = data.callbacks.start();
-            if (first) this.sendData(this.writer.write(first.type, first.options));
+            if (first) {
+                try {
+                    const b = this.writer.write(first.type, first.options);
+                    this.sendData(b);
+                } catch (error) {
+                    this.stopFlow(flowId, new Error('OB write error'));
+                    data.finished = true;
+                }
+            }
 
             if (!data.finished) {
                 this.activeFlows.push(data);
@@ -315,7 +323,13 @@ export class MqttClient<
             if (flow.callbacks.accept?.(packet.data)) {
                 const next = flow.callbacks.next?.(packet.data);
                 if (next) {
-                    this.sendData(this.writer.write(next.type, next.options));
+                    try {
+                        const b = this.writer.write(next.type, next.options);
+                        this.sendData(b);
+                    } catch (error) {
+                        this.stopFlow(flow.flowId, new Error('OB write error'));
+                        return result;
+                    }
                 }
                 result = true;
             }
@@ -330,7 +344,11 @@ export class MqttClient<
 
     protected stopExecutingFlows(error: Error) {
         for (const flow of this.activeFlows) {
-            flow.resolvers.reject(error);
+            if (error instanceof AbortError) {
+                flow.resolvers.resolve(undefined);
+            } else {
+                flow.resolvers.reject(error);
+            }
             flow.finished = true;
         }
         this.activeFlows = [];
@@ -353,7 +371,14 @@ export class MqttClient<
                     return;
                 }
                 const packet = flow.callbacks.start();
-                if (packet) this.sendData(this.writer.write(packet.type, packet.options));
+                if (packet) {
+                    try {
+                        const b = this.writer.write(packet.type, packet.options);
+                        this.sendData(b);
+                    } catch (error) {
+                        this.stopFlow(flow.flowId, new Error('OB write error'));
+                    }
+                }
             });
             connectPromiseFlow
                 .finally(() => this.stopExecuting(timerId))
